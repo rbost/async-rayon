@@ -1,3 +1,5 @@
+//! Stream adapter for rayon's parallel iterators.
+
 #![allow(unused_imports)]
 use std::ops::DerefMut;
 use std::pin::Pin;

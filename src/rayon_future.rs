@@ -1,3 +1,5 @@
+//! Spawn a rayon task and run it as a future
+
 use std::future::Future;
 
 type ToFutureError = futures::channel::oneshot::Canceled;
