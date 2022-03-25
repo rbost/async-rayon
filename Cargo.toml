@@ -1,0 +1,13 @@
+[package]
+name = "async-rayon"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+flume = "0.10.12"
+futures = "0.3.21"
+pin-project = "1.0.10"
+rayon = "1.5.1"
+
+[dev-dependencies]
+tokio = {version ="1.6.0", features = ["full"]}
