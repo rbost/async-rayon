@@ -4,19 +4,10 @@ use core::task::{Context, Poll};
 use std::sync::Arc;
 
 use futures::channel::oneshot::*;
+use futures::ready;
 use futures::Future;
 use futures::{stream::FusedStream, Stream};
 use pin_project::pin_project;
-
-#[macro_export]
-macro_rules! ready {
-    ($e:expr $(,)?) => {
-        match $e {
-            Poll::Ready(t) => t,
-            Poll::Pending => return Poll::Pending,
-        }
-    };
-}
 
 /// Stream for the [`map`](super::RayonStreamExt::cpu_intensive_map) method.
 #[must_use = "streams do nothing unless polled"]

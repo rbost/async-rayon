@@ -12,14 +12,17 @@ use futures::{Stream, StreamExt};
 use rayon::iter::ParallelIterator;
 use rayon::Scope;
 
+/// A stream wrapping a `ParallelIterator`.
 #[pin_project]
 pub struct ParIterStream<I: ParallelIterator + 'static> {
-    // #[pin]
     par_iter: Option<I>,
     #[pin]
     receiver_stream: Option<flume::r#async::RecvStream<'static, I::Item>>,
 }
 
+/// Transform a parallel iterator into an asynchronous stream.
+/// Note that the parallel iterator will be started only upon awaiting the stream's first element.
+/// There is no guarantee order on the stream's output.
 pub fn to_par_iter_stream<I: ParallelIterator>(
     par_iter: I,
 ) -> ParIterStream<I> {

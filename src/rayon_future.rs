@@ -4,6 +4,7 @@ use std::future::Future;
 
 type ToFutureError = futures::channel::oneshot::Canceled;
 
+/// Spawn a new task on rayon's global thread pool and return a future whose output is the task's output.
 // This implementation is not ideal as it starts the concurrent rayon task right away, and not when the future is polled.
 pub fn to_rayon_future<F, T>(
     f: F,
