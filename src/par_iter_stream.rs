@@ -1,4 +1,4 @@
-//! Stream adapter for rayon's parallel iterators.
+//! Stream adapter for Rayon's parallel iterators.
 
 #![allow(unused_imports)]
 use std::ops::DerefMut;
@@ -21,8 +21,8 @@ pub struct ParIterStream<I: ParallelIterator + 'static> {
 }
 
 /// Transform a parallel iterator into an asynchronous stream.
-/// Note that the parallel iterator will be started only upon awaiting the stream's first element.
-/// There is no guarantee order on the stream's output.
+/// Note that the parallel iterator will be started only upon awaiting the
+/// stream's first element. There is no guarantee order on the stream's output.
 pub fn to_par_iter_stream<I: ParallelIterator>(
     par_iter: I,
 ) -> ParIterStream<I> {
@@ -53,7 +53,7 @@ where
 
             let (sender, receiver) = flume::unbounded::<I::Item>();
 
-            // launch the rayon tasks
+            // launch the Rayon tasks
             let par_iter = this.par_iter.take().unwrap();
 
             rayon::spawn(move || {

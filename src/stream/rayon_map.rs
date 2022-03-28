@@ -9,7 +9,7 @@ use futures::Future;
 use futures::{stream::FusedStream, Stream};
 use pin_project::pin_project;
 
-/// Stream for the [`map`](super::RayonStreamExt::cpu_intensive_map) method.
+/// Stream for the [`map`](super::RayonStreamExt::rayon_map) method.
 #[must_use = "streams do nothing unless polled"]
 #[pin_project]
 pub struct RayonMap<St, F, T> {
@@ -78,12 +78,14 @@ where
                 let f = (this.f).clone();
                 rayon::spawn(move || {
                     let val = f(item);
-                    sender
-                        .send(val)
-                        .unwrap_or_else(|_| panic!("Receiver dropped"));
+                    // Explicitly ignore the error, which is raised when the
+                    // receiver has been dropped. We cannot do anything smart is
+                    // this case: it  means that the receiving future has been
+                    // dropped/canceled and we just do not want to crash the
+                    // entire program because of that.
+                    let _ = sender.send(val);
                 });
 
-                //     this.receiver.replace(receiver);
                 this.receiver.set(Some(receiver));
             } else {
                 // there is no channel waiting for any event, and the stream is

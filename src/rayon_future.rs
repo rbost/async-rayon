@@ -1,11 +1,33 @@
-//! Spawn a rayon task and run it as a future
+//! Spawn a Rayon task and run it as a future
 
 use std::future::Future;
 
 type ToFutureError = futures::channel::oneshot::Canceled;
 
-/// Spawn a new task on rayon's global thread pool and return a future whose output is the task's output.
-// This implementation is not ideal as it starts the concurrent rayon task right away, and not when the future is polled.
+/// Spawn a new task on Rayon's global thread pool and return a future whose
+/// output is the task's output.
+/// The `f` function is run on Rayon's global thread pool and can be
+/// blocking or CPU intensive.
+///
+/// # Examples
+/// ```
+/// # futures::executor::block_on(async {
+/// use futures::stream::{self, StreamExt};
+/// use futures::join;
+/// use async_rayon::prelude::to_rayon_future;
+///
+/// let out = to_rayon_future(|| {
+///         std::thread::sleep(std::time::Duration::from_millis(200));
+///         // Make sure that the closure is run on a Rayon worker thread
+///         assert!(rayon::current_thread_index().is_some());
+///         42
+/// }).await;
+///
+/// assert_eq!(out, Ok(42));
+/// # });
+/// ```
+// This implementation is not ideal as it starts the concurrent Rayon task right
+// away, and not when the future is polled.
 pub fn to_rayon_future<F, T>(
     f: F,
 ) -> impl Future<Output = Result<T, ToFutureError>>
