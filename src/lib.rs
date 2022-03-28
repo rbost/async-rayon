@@ -20,7 +20,6 @@
 #![deny(unreachable_pub)]
 #![warn(rust_2018_idioms)]
 
-pub mod par_iter_stream;
 pub mod rayon_future;
 pub mod stream;
 
