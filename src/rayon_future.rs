@@ -1,8 +1,25 @@
 //! Spawn a Rayon task and run it as a future
 
-use std::future::Future;
+// type ToFutureError = futures::channel::oneshot::Canceled;
 
-type ToFutureError = futures::channel::oneshot::Canceled;
+/// Error returned from a [`Receiver`](Receiver) when the corresponding
+/// [`Sender`](Sender) is dropped.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct ToFutureError;
+
+impl std::fmt::Display for ToFutureError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Rayon task canceled.")
+    }
+}
+
+impl std::error::Error for ToFutureError {}
+
+impl From<futures::channel::oneshot::Canceled> for ToFutureError {
+    fn from(_: futures::channel::oneshot::Canceled) -> Self {
+        ToFutureError
+    }
+}
 
 /// Spawn a new task on Rayon's global thread pool and return a future whose
 /// output is the task's output.
@@ -26,16 +43,13 @@ type ToFutureError = futures::channel::oneshot::Canceled;
 /// assert_eq!(out, Ok(42));
 /// # });
 /// ```
-// This implementation is not ideal as it starts the concurrent Rayon task right
-// away, and not when the future is polled.
-pub fn to_rayon_future<F, T>(
-    f: F,
-) -> impl Future<Output = Result<T, ToFutureError>>
+pub async fn to_rayon_future<F, T>(f: F) -> Result<T, ToFutureError>
 where
     F: Fn() -> T + Send + 'static,
     T: Send + 'static,
 {
     let (sender, receiver) = futures::channel::oneshot::channel::<T>();
+
     rayon::spawn(move || {
         let val = f();
         // Explicitly ignore the error, which is raised when the receiver has
@@ -44,6 +58,5 @@ where
         // do not want to crash the entire program because of that.
         let _ = sender.send(val);
     });
-
-    receiver
+    receiver.await.map_err(|e| e.into())
 }
