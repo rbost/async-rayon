@@ -2,8 +2,7 @@
 
 // type ToFutureError = futures::channel::oneshot::Canceled;
 
-/// Error returned from a [`Receiver`](Receiver) when the corresponding
-/// [`Sender`](Sender) is dropped.
+/// Error returned from a by the [`to_rayon_future`] function.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct ToFutureError;
 

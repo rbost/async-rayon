@@ -1,4 +1,4 @@
-//! Streams
+//! Streams adapters and utilities.
 //!
 //! This module defines functions to combine `Stream`s with Rayon.
 

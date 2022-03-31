@@ -1,0 +1,10 @@
+{
+    "default": true,
+    "MD007": {
+        "indent": 4
+    },
+    "no-hard-tabs": {
+        "code_blocks": true,
+        "spaces_per_tab": 4
+    }
+}

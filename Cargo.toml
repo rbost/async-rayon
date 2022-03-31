@@ -1,7 +1,13 @@
 [package]
 name = "async-rayon"
 version = "0.1.0"
+authors = ["Raphael Bost <raphael_bost@alumni.brown.edu>"]
 edition = "2018"
+description = "Port Rayon's concurrency to the async world."
+repository = "https://github.com/rbost/async-rayon"
+categories = ["concurrency", "asynchronous"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
 
 [dependencies]
 flume = "0.10.12"
