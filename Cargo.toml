@@ -16,4 +16,4 @@ pin-project = "1.0.10"
 rayon = "1.5.1"
 
 [dev-dependencies]
-tokio = {version ="1.6.0", features = ["full"]}
+tokio = { version = "1.6.0", features = ["rt"] }
